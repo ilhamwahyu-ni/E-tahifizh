@@ -19,6 +19,7 @@ class HafalanSiswa extends Model
         'siswa_id',
         'surah_id',
         'tahfidz_id',
+        'nilai',
     ];
 
     /**

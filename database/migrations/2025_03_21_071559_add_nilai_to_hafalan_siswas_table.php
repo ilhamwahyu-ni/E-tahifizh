@@ -10,13 +10,8 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::create('hafalan_siswas', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('siswa_id');
-            $table->foreignId('surah_id');
-            $table->foreignId('tahfidz_id');
-
-            $table->timestamps();
+        Schema::table('hafalan_siswas', function (Blueprint $table) {
+            $table->integer('nilai')->nullable();
         });
     }
 
@@ -25,6 +20,8 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists('hafalan_siswas');
+        Schema::table('hafalan_siswas', function (Blueprint $table) {
+            $table->dropColumn('nilai');
+        });
     }
 };

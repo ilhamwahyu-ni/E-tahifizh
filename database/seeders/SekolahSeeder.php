@@ -13,9 +13,9 @@ class SekolahSeeder extends Seeder
     public function run(): void
     {
         Sekolah::create([
-            'npsn' => rand(1000000000, 9999999999),
-            'nama' => 'Maarif',
-            'tahun_ajaran' => '2024',
+            'npsn' => '12345678',
+            'name' => 'Maarif',
+            'ajaran' => '2024',
             'semester' => 1,
             'logo' => null
         ]);
