@@ -25,7 +25,7 @@ class HafalanSiswaFactory extends Factory
     {
         return [
             'siswa_id' => Siswa::factory(),
-            'surah_id' => Surah::factory(),
+            'surah_id' => fake()->numberBetween(1, 114),
             'tahfidz_id' => Tahfidz::factory(),
         ];
     }

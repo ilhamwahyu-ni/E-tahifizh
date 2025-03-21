@@ -24,7 +24,7 @@ class RiwayatHafalanFactory extends Factory
     {
         return [
             'siswa_id' => Siswa::factory(),
-            'surah_id' => Surah::factory(),
+            'surah_id' => fake()->numberBetween(1, 114),
             'tanggal_hafalan' => fake()->date(),
             'nilai' => fake()->numberBetween(-10000, 10000),
 
