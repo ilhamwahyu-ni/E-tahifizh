@@ -1,5 +1,39 @@
+created:
+    - database/factories/SekolahFactory.php
+    - database/factories/TmKelasFactory.php
+    - database/factories/TrKelasFactory.php
+    - database/factories/SiswaFactory.php
+    - database/factories/HafalanSiswaFactory.php
+    - database/factories/TahfidzFactory.php
+    - database/factories/SurahFactory.php
+    - database/factories/RiwayatHafalanFactory.php
+    - database/migrations/2025_03_21_062009_create_sekolahs_table.php
+    - database/migrations/2025_03_21_062010_create_tm_kelas_table.php
+    - database/migrations/2025_03_21_062011_create_tr_kelas_table.php
+    - database/migrations/2025_03_21_062012_create_siswas_table.php
+    - database/migrations/2025_03_21_062013_create_hafalan_siswas_table.php
+    - database/migrations/2025_03_21_062014_create_tahfidzs_table.php
+    - database/migrations/2025_03_21_062015_create_surahs_table.php
+    - database/migrations/2025_03_21_062016_create_riwayat_hafalans_table.php
+    - app/Models/Sekolah.php
+    - app/Models/TmKelas.php
+    - app/Models/TrKelas.php
+    - app/Models/Siswa.php
+    - app/Models/HafalanSiswa.php
+    - app/Models/Tahfidz.php
+    - app/Models/Surah.php
+    - app/Models/RiwayatHafalan.php
+    - database/seeders/SekolahTmKelasTrKelasSiswaHafalanSiswaTahfidzSurahRiwayatHafalanSeeder.php
 models:
     Book: { title: string, author: string, description: text }
     Contact: { name: string }
     Post: { title: string, content: text }
     User: { name: string, email: string, email_verified_at: 'timestamp nullable', password: 'string nullable', remember_token: 'string:100 nullable', avatar_url: 'string nullable' }
+    Sekolah: { softdeletes: softDeletes, timestamps: timestamps, npsn: 'string:8 unique', name: 'string:255', ajaran: 'string:4', semester: integer, logo: string, relationships: { hasMany: TmKelas } }
+    TmKelas: { timestamps: timestamps, sekolah_id: foreignId, nama: 'string:255', tingkat: integer, relationships: { belongsTo: Sekolah, hasMany: TrKelas } }
+    TrKelas: { timestamps: timestamps, tm_kelas_id: foreignId, nama: string, ruangan: string, siswa_aktif: integer, ajaran: 'string:4', semester: integer, status: 'enum:Aktif,Tidak_Aktif default:Aktif', relationships: { belongsTo: 'TmKelas,User', hasMany: Siswa } }
+    Siswa: { softdeletes: softDeletes, timestamps: timestamps, tr_kelas_id: foreignId, nisn: 'string:255 unique', name: 'string:255', gender: 'enum:Laki-laki,Perempuan', relationships: { belongsTo: TrKelas, hasMany: 'HafalanSiswa,RiwayatHafalan', hasOne: Tahfidz } }
+    HafalanSiswa: { relationships: { belongsTo: 'Siswa,Surah,Tahfidz' } }
+    Tahfidz: { timestamps: timestamps, siswa_id: foreignId, catatan: text, total_hafalan: integer, target_hafalan: integer, relationships: { belongsTo: Siswa, hasMany: HafalanSiswa } }
+    Surah: { timestamps: timestamps, number: integer, name: 'string:255', relationships: { hasMany: HafalanSiswa } }
+    RiwayatHafalan: { timestamps: timestamps, siswa_id: foreignId, surah_id: foreignId, tanggal_hafalan: date, nilai: 'integer min:0,max:100', keterangan: text, jenis_hafalan: 'enum:Murni,BinNazhar', status: 'enum:Belum_Hafal,Lancar,Mutqin', ajaran: 'string:4', semester: integer, relationships: { belongsTo: 'Siswa,Surah' } }
