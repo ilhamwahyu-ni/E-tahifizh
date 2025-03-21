@@ -24,7 +24,7 @@ class TrKelas extends Model
         'ajaran',
         'semester',
         'status',
-        'user_id',
+   
     ];
 
     /**

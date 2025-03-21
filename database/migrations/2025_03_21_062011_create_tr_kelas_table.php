@@ -20,7 +20,7 @@ return new class extends Migration
             $table->string('ajaran', 4);
             $table->integer('semester');
             $table->enum('status', ["Aktif","Tidak_Aktif"])->default('Aktif');
-            $table->foreignId('user_id');
+       
             $table->timestamps();
         });
     }

@@ -27,9 +27,9 @@ class TrKelasFactory extends Factory
             'nama' => fake()->word(),
             'ruangan' => fake()->word(),
             'siswa_aktif' => fake()->numberBetween(-10000, 10000),
-            'ajaran' => fake()->regexify('[A-Za-z0-9]{4}'),
-            'semester' => fake()->numberBetween(-10000, 10000),
-            'status' => fake()->randomElement(["Aktif","Tidak_Aktif"]),
+            'ajaran' => '2024',
+            'semester' => 1,
+            'status' => fake()->randomElement(["Aktif", "Tidak_Aktif"]),
             'user_id' => User::factory(),
         ];
     }

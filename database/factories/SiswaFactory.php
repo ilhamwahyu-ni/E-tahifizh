@@ -23,7 +23,7 @@ class SiswaFactory extends Factory
     {
         return [
             'tr_kelas_id' => TrKelas::factory(),
-            'nisn' => fake()->regexify('[A-Za-z0-9]{255}'),
+            'nisn' => fake()->numerify('##########'),
             'name' => fake()->name(),
             'gender' => fake()->randomElement(["Laki-laki","Perempuan"]),
         ];

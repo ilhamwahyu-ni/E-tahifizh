@@ -24,8 +24,8 @@ class TahfidzFactory extends Factory
         return [
             'siswa_id' => Siswa::factory(),
             'catatan' => fake()->text(),
-            'total_hafalan' => fake()->numberBetween(-10000, 10000),
-            'target_hafalan' => fake()->numberBetween(-10000, 10000),
+
+
         ];
     }
 }

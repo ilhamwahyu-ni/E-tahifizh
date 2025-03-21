@@ -1,29 +1,12 @@
 created:
-    - database/factories/SekolahFactory.php
-    - database/factories/TmKelasFactory.php
-    - database/factories/TrKelasFactory.php
-    - database/factories/SiswaFactory.php
-    - database/factories/HafalanSiswaFactory.php
-    - database/factories/TahfidzFactory.php
-    - database/factories/SurahFactory.php
-    - database/factories/RiwayatHafalanFactory.php
-    - database/migrations/2025_03_21_062009_create_sekolahs_table.php
-    - database/migrations/2025_03_21_062010_create_tm_kelas_table.php
-    - database/migrations/2025_03_21_062011_create_tr_kelas_table.php
-    - database/migrations/2025_03_21_062012_create_siswas_table.php
-    - database/migrations/2025_03_21_062013_create_hafalan_siswas_table.php
-    - database/migrations/2025_03_21_062014_create_tahfidzs_table.php
-    - database/migrations/2025_03_21_062015_create_surahs_table.php
-    - database/migrations/2025_03_21_062016_create_riwayat_hafalans_table.php
-    - app/Models/Sekolah.php
-    - app/Models/TmKelas.php
-    - app/Models/TrKelas.php
-    - app/Models/Siswa.php
-    - app/Models/HafalanSiswa.php
-    - app/Models/Tahfidz.php
-    - app/Models/Surah.php
-    - app/Models/RiwayatHafalan.php
-    - database/seeders/SekolahTmKelasTrKelasSiswaHafalanSiswaTahfidzSurahRiwayatHafalanSeeder.php
+    - database/seeders/SekolahSeeder.php
+    - database/seeders/TmKelasSeeder.php
+    - database/seeders/TrKelasSeeder.php
+    - database/seeders/SiswaSeeder.php
+    - database/seeders/HafalanSiswaSeeder.php
+    - database/seeders/TahfidzSeeder.php
+    - database/seeders/SurahSeeder.php
+    - database/seeders/RiwayatHafalanSeeder.php
 models:
     Book: { title: string, author: string, description: text }
     Contact: { name: string }

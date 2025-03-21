@@ -17,8 +17,7 @@ return new class extends Migration
             $table->foreignId('surah_id');
             $table->date('tanggal_hafalan');
             $table->integer('nilai');
-            $table->text('keterangan');
-            $table->enum('jenis_hafalan', ["Murni","BinNazhar"]);
+           
             $table->enum('status', ["Belum_Hafal","Lancar","Mutqin"]);
             $table->string('ajaran', 4);
             $table->integer('semester');

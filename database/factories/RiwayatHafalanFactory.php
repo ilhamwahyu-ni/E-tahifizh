@@ -27,11 +27,11 @@ class RiwayatHafalanFactory extends Factory
             'surah_id' => Surah::factory(),
             'tanggal_hafalan' => fake()->date(),
             'nilai' => fake()->numberBetween(-10000, 10000),
-            'keterangan' => fake()->text(),
-            'jenis_hafalan' => fake()->randomElement(["Murni","BinNazhar"]),
-            'status' => fake()->randomElement(["Belum_Hafal","Lancar","Mutqin"]),
-            'ajaran' => fake()->regexify('[A-Za-z0-9]{4}'),
-            'semester' => fake()->numberBetween(-10000, 10000),
+
+
+            'status' => fake()->randomElement(["Belum_Hafal", "Lancar", "Mutqin"]),
+            'ajaran' => fake()->randomElement(['2023', '2024', '2025']),
+            'semester' => fake()->randomElement([1, 2]),
         ];
     }
 }
