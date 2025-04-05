@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 models:
   Sekolah:
     nama: string:100
@@ -93,3 +94,8 @@ models:
 
 seeders: Sekolah,TmKelas,TahunAjaran,Semester,Surah,Siswa,HafalanSiswa,RiwayatHafalan
 
+=======
+
+
+seeders: Sekolah,TmKelas,TrKelas,Siswa,HafalanSiswa,Tahfidz,Surah,RiwayatHafalan
+>>>>>>> 5408eefb7f2cdf50ee3bedb208276e60c1ea755f
