@@ -1,5 +1,95 @@
 models:
-  # ...
+  Sekolah:
+    nama: string:100
+    alamat: text
+    logo: nullable string
+    status: enum:aktif,nonaktif default:aktif
+    timestamps: true
+    softDeletes: true
+    relationships:
+      hasMany: Siswa, TmKelas
+      hasManyThrough: HafalanSiswa, Siswa
 
-controllers:
-  # ...
+  Siswa:
+    nama: string:100
+    nis: string:20 unique
+    kelas: string:10
+    jenis_kelamin: enum:L,P
+    status: enum:aktif,nonaktif,lulus,pindah default:aktif
+    timestamps: true
+    softDeletes: true
+    relationships:
+      belongsTo: TmKelas, Sekolah
+      hasMany: HafalanSiswa
+
+      morphMany: RiwayatHafalan
+
+  TmKelas:
+    level: enum:1,2,3,4,5,6
+    nama_rombel: string:10
+    status: enum:aktif,nonaktif default:aktif
+    timestamps: true
+    softDeletes: true
+    relationships:
+      belongsTo: Sekolah
+      hasMany: Siswa
+      hasManyThrough: HafalanSiswa, Siswa
+
+  TahunAjaran:
+    tahun: string:9 unique
+    nama: string:100
+    status: enum:aktif,nonaktif default:nonaktif
+    timestamps: true
+    softDeletes: true
+    relationships:
+      hasMany: Semester
+
+  Semester:
+    nama: enum:Ganjil,Genap default:Ganjil
+    tahun_ajaran_id: foreignId -> TahunAjaran.id
+    status: enum:aktif,nonaktif default:aktif
+    timestamps: true
+    softDeletes: true
+    relationships:
+      belongsTo: TahunAjaran
+      hasMany: HafalanSiswa
+      hasManyThrough: RiwayatHafalan, HafalanSiswa
+
+  Surah:
+    no: integer
+    nama: string:100
+    timestamps: true
+    softDeletes: true
+    relationships:
+      hasMany: HafalanSiswa
+
+  HafalanSiswa:
+    siswa_id: foreignId -> Siswa.id
+    surah_id: foreignId -> Surah.id
+
+    semester_id: foreignId -> Semester.id
+    tingkat_kelas: string:10
+    nilai: string:10
+    status_hafalan: enum:belum,proses,selesai default:belum
+    catatan_global: nullable text
+    timestamps: true
+    softDeletes: true
+    unique: siswa_id,surah_id,semester_id
+    relationships:
+      belongsTo: Siswa, Surah, Semester
+      hasMany: RiwayatHafalan
+      morphTo: hafalable
+
+  RiwayatHafalan:
+    hafalan_siswa_id: foreignId -> HafalanSiswa.id
+    catatan: text
+    status: enum:baru,diperbarui,dihapus
+    tanggal: timestamp
+    timestamps: true
+    softDeletes: true
+    relationships:
+      belongsTo: HafalanSiswa
+      morphTo: recordable
+
+seeders: Sekolah,TmKelas,TahunAjaran,Semester,Surah,Siswa,HafalanSiswa,RiwayatHafalan
+
