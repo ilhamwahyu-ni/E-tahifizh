@@ -12,6 +12,11 @@ class SekolahSeeder extends Seeder
      */
     public function run(): void
     {
-        Sekolah::factory()->count(5)->create();
+        Sekolah::factory()->create([
+            'nama' => 'sekolah maarif padang panjang',
+            'alamat' => 'Alamat default untuk seeder', // Default address
+            'logo' => 'logo_default.png', // Default logo path or identifier
+            'status' => 'aktif', // Default status
+        ]);
     }
 }

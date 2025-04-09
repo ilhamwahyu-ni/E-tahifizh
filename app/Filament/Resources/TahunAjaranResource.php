@@ -2,9 +2,9 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\BookResource\Pages;
-use App\Filament\Resources\BookResource\RelationManagers;
-use App\Models\Book;
+use App\Filament\Resources\TahunAjaranResource\Pages;
+use App\Filament\Resources\TahunAjaranResource\RelationManagers;
+use App\Models\TahunAjaran;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -13,9 +13,9 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
-class BookResource extends Resource
+class TahunAjaranResource extends Resource
 {
-    protected static ?string $model = Book::class;
+    protected static ?string $model = TahunAjaran::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
@@ -23,15 +23,14 @@ class BookResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('title')
+                Forms\Components\TextInput::make('tahun')
                     ->required()
-                    ->maxLength(255),
-                Forms\Components\TextInput::make('author')
+                    ->maxLength(9),
+                Forms\Components\TextInput::make('nama')
                     ->required()
-                    ->maxLength(255),
-                Forms\Components\Textarea::make('description')
-                    ->required()
-                    ->columnSpanFull(),
+                    ->maxLength(100),
+                Forms\Components\TextInput::make('status')
+                    ->required(),
             ]);
     }
 
@@ -39,15 +38,20 @@ class BookResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('title')
+                Tables\Columns\TextColumn::make('tahun')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('author')
+                Tables\Columns\TextColumn::make('nama')
                     ->searchable(),
+                Tables\Columns\TextColumn::make('status'),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('updated_at')
+                    ->dateTime()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                Tables\Columns\TextColumn::make('deleted_at')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
@@ -77,9 +81,9 @@ class BookResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListBooks::route('/'),
-            'create' => Pages\CreateBook::route('/create'),
-            'edit' => Pages\EditBook::route('/{record}/edit'),
+            'index' => Pages\ListTahunAjarans::route('/'),
+            'create' => Pages\CreateTahunAjaran::route('/create'),
+            'edit' => Pages\EditTahunAjaran::route('/{record}/edit'),
         ];
     }
 }

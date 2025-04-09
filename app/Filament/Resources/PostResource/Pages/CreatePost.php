@@ -1,14 +1,14 @@
 <?php
 
-namespace App\Filament\Resources\BookResource\Pages;
+namespace App\Filament\Resources\PostResource\Pages;
 
-use App\Filament\Resources\BookResource;
+use App\Filament\Resources\PostResource;
 use Filament\Actions;
-use Filament\Resources\Pages\ViewRecord;
+use Filament\Resources\Pages\CreateRecord;
 
-class ViewBook extends ViewRecord
+class CreatePost extends CreateRecord
 {
-    protected static string $resource = BookResource::class;
+    protected static string $resource = PostResource::class;
     protected static bool $canCreateAnother = false;
 
     //customize redirect after create
