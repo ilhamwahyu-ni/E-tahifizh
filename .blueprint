@@ -1,5 +1,46 @@
+created:
+    - database/factories/SekolahFactory.php
+    - database/factories/TmKelasFactory.php
+    - database/factories/TahunAjaranFactory.php
+    - database/factories/SemesterFactory.php
+    - database/factories/RombelFactory.php
+    - database/factories/SiswaFactory.php
+    - database/factories/SurahFactory.php
+    - database/factories/HafalanSiswaFactory.php
+    - database/factories/RiwayatHafalanFactory.php
+    - database/factories/RekapSemesterSiswaFactory.php
+    - database/migrations/2025_04_09_051014_create_sekolahs_table.php
+    - database/migrations/2025_04_09_051015_create_tm_kelas_table.php
+    - database/migrations/2025_04_09_051016_create_tahun_ajarans_table.php
+    - database/migrations/2025_04_09_051017_create_semesters_table.php
+    - database/migrations/2025_04_09_051018_create_rombels_table.php
+    - database/migrations/2025_04_09_051019_create_siswas_table.php
+    - database/migrations/2025_04_09_051020_create_surahs_table.php
+    - database/migrations/2025_04_09_051021_create_hafalan_siswas_table.php
+    - database/migrations/2025_04_09_051022_create_riwayat_hafalans_table.php
+    - database/migrations/2025_04_09_051023_create_rekap_semester_siswas_table.php
+    - app/Models/Sekolah.php
+    - app/Models/TmKelas.php
+    - app/Models/TahunAjaran.php
+    - app/Models/Semester.php
+    - app/Models/Rombel.php
+    - app/Models/Siswa.php
+    - app/Models/Surah.php
+    - app/Models/HafalanSiswa.php
+    - app/Models/RiwayatHafalan.php
+    - app/Models/RekapSemesterSiswa.php
 models:
     Book: { title: string, author: string, description: text }
     Contact: { name: string }
     Post: { title: string, content: text }
     User: { name: string, email: string, email_verified_at: 'timestamp nullable', password: 'string nullable', remember_token: 'string:100 nullable', avatar_url: 'string nullable' }
+    Sekolah: { nama: 'string:100', alamat: text, logo: 'string nullable', status: 'enum:aktif,nonaktif default:aktif', timestamps: timestamps, softdeletes: softDeletes, relationships: { hasMany: 'Siswa, Rombel' } }
+    TmKelas: { level: 'enum:1,2,3,4,5,6', nama_rombel: 'string:10', timestamps: timestamps, softdeletes: softDeletes, relationships: { hasMany: Rombel } }
+    TahunAjaran: { tahun: 'string:9 unique', nama: 'string:100', status: 'enum:aktif,nonaktif default:nonaktif', timestamps: timestamps, softdeletes: softDeletes, relationships: { hasMany: 'Semester, Rombel' } }
+    Semester: { nama: 'enum:Ganjil,Genap default:Ganjil', tahun_ajaran_id: foreignId, status: 'enum:aktif,nonaktif default:aktif', timestamps: timestamps, softdeletes: softDeletes, relationships: { belongsTo: TahunAjaran, hasMany: 'HafalanSiswa, RekapSemesterSiswa' } }
+    Rombel: { tahun_ajaran_id: foreignId, tm_kelas_id: foreignId, sekolah_id: foreignId, nama_rombongan: 'string:100', status: 'enum:aktif,nonaktif default:aktif', timestamps: timestamps, softdeletes: softDeletes, indexes: { unique: [tahun_ajaran_id, tm_kelas_id] }, relationships: { belongsTo: 'TahunAjaran, TmKelas, Sekolah', hasMany: Siswa } }
+    Siswa: { nama: 'string:100', nis: 'string:20 unique', rombel_id: foreignId, sekolah_id: foreignId, jenis_kelamin: 'enum:L,P', status: 'enum:aktif,nonaktif,lulus,pindah default:aktif', timestamps: timestamps, softdeletes: softDeletes, relationships: { belongsTo: 'Rombel, Sekolah', hasMany: 'HafalanSiswa, RekapSemesterSiswa' } }
+    Surah: { 'no': 'integer unique', nama: 'string:100', timestamps: timestamps, softdeletes: softDeletes, relationships: { hasMany: HafalanSiswa } }
+    HafalanSiswa: { siswa_id: foreignId, surah_id: foreignId, semester_id: foreignId, tingkat_kelas: 'string:10', nilai: 'string:10', status_hafalan: 'enum:belum,proses,selesai default:belum', timestamps: timestamps, softdeletes: softDeletes, indexes: { unique: [siswa_id, surah_id, semester_id] }, relationships: { belongsTo: 'Siswa, Surah, Semester', hasMany: RiwayatHafalan } }
+    RiwayatHafalan: { hafalan_siswa_id: foreignId, catatan: text, status: 'enum:baru,diperbarui,dihapus', tanggal: timestamp, timestamps: timestamps, softdeletes: softDeletes, relationships: { belongsTo: HafalanSiswa } }
+    RekapSemesterSiswa: { siswa_id: foreignId, semester_id: foreignId, catatan_global: 'text nullable', timestamps: timestamps, softdeletes: softDeletes, indexes: { unique: [siswa_id, semester_id] }, relationships: { belongsTo: 'Siswa, Semester' } }
