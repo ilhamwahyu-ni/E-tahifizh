@@ -1,34 +1,14 @@
 created:
-    - database/factories/SekolahFactory.php
-    - database/factories/TmKelasFactory.php
-    - database/factories/TahunAjaranFactory.php
-    - database/factories/SemesterFactory.php
-    - database/factories/RombelFactory.php
-    - database/factories/SiswaFactory.php
-    - database/factories/SurahFactory.php
-    - database/factories/HafalanSiswaFactory.php
-    - database/factories/RiwayatHafalanFactory.php
-    - database/factories/RekapSemesterSiswaFactory.php
-    - database/migrations/2025_04_09_051014_create_sekolahs_table.php
-    - database/migrations/2025_04_09_051015_create_tm_kelas_table.php
-    - database/migrations/2025_04_09_051016_create_tahun_ajarans_table.php
-    - database/migrations/2025_04_09_051017_create_semesters_table.php
-    - database/migrations/2025_04_09_051018_create_rombels_table.php
-    - database/migrations/2025_04_09_051019_create_siswas_table.php
-    - database/migrations/2025_04_09_051020_create_surahs_table.php
-    - database/migrations/2025_04_09_051021_create_hafalan_siswas_table.php
-    - database/migrations/2025_04_09_051022_create_riwayat_hafalans_table.php
-    - database/migrations/2025_04_09_051023_create_rekap_semester_siswas_table.php
-    - app/Models/Sekolah.php
-    - app/Models/TmKelas.php
-    - app/Models/TahunAjaran.php
-    - app/Models/Semester.php
-    - app/Models/Rombel.php
-    - app/Models/Siswa.php
-    - app/Models/Surah.php
-    - app/Models/HafalanSiswa.php
-    - app/Models/RiwayatHafalan.php
-    - app/Models/RekapSemesterSiswa.php
+    - database/seeders/SekolahSeeder.php
+    - database/seeders/TmKelasSeeder.php
+    - database/seeders/TahunAjaranSeeder.php
+    - database/seeders/SemesterSeeder.php
+    - database/seeders/RombelSeeder.php
+    - database/seeders/SurahSeeder.php
+    - database/seeders/SiswaSeeder.php
+    - database/seeders/HafalanSiswaSeeder.php
+    - database/seeders/RiwayatHafalanSeeder.php
+    - database/seeders/RekapSemesterSiswaSeeder.php
 models:
     Book: { title: string, author: string, description: text }
     Contact: { name: string }
