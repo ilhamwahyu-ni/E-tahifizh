@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Models\Semester;
 use App\Models\TahunAjaran;
 use Illuminate\Database\Seeder;
+use Illuminate\Database\Eloquent\ModelNotFoundException; // Import exception
 
 class SemesterSeeder extends Seeder
 {
@@ -14,27 +15,30 @@ class SemesterSeeder extends Seeder
     public function run(): void
     {
         // Find the specific TahunAjaran created in TahunAjaranSeeder
-        $tahunAjaran = TahunAjaran::where('tahun', '2024/2026')->first();
+        try {
+            // Use firstOrFail to ensure it exists, matching RombelSeeder logic
+            $tahunAjaran = TahunAjaran::where('nama', 'Tahun Ajaran 2024/2026')->firstOrFail();
+        } catch (ModelNotFoundException $e) {
+            if ($this->command) {
+                $this->command->error('Specific Tahun Ajaran "Tahun Ajaran 2024/2026" not found. Cannot seed Semesters.');
+            }
+            return; // Stop if the specific TahunAjaran isn't found
+        }
 
-        if ($tahunAjaran) {
-            // Create Ganjil semester
-            Semester::factory()->create([
+        // Create Ganjil semester using recycle
+        Semester::factory()
+            ->recycle($tahunAjaran) // Recycle the specific TahunAjaran instance
+            ->create([
                 'nama' => 'Ganjil',
-                'tahun_ajaran_id' => $tahunAjaran->id,
                 'status' => 'aktif', // Default status
             ]);
 
-            // Create Genap semester
-            Semester::factory()->create([
+        // Create Genap semester using recycle
+        Semester::factory()
+            ->recycle($tahunAjaran) // Recycle the specific TahunAjaran instance
+            ->create([
                 'nama' => 'Genap',
-                'tahun_ajaran_id' => $tahunAjaran->id,
                 'status' => 'nonaktif', // Default status, maybe only one is active? Adjust if needed.
             ]);
-        } else {
-            // Handle case where the TahunAjaran is not found, maybe log an error or create a default one
-            // For now, we'll just skip creating semesters if the specific TahunAjaran doesn't exist.
-            // Or, alternatively, create the TahunAjaran here if it's guaranteed to be needed.
-            // Let's assume TahunAjaranSeeder runs first.
-        }
     }
 }

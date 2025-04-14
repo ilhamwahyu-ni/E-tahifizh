@@ -21,8 +21,7 @@ class TmKelasFactory extends Factory
     public function definition(): array
     {
         return [
-            'level' => fake()->randomElement(["1","2","3","4","5","6"]),
-            'nama_rombel' => fake()->regexify('[A-Za-z0-9]{10}'),
+            'level' => fake()->numberBetween(1, 6),
         ];
     }
 }

@@ -27,7 +27,7 @@ class RombelResource extends Resource
                     ->relationship('tahunAjaran', 'id')
                     ->required(),
                 Forms\Components\Select::make('tm_kelas_id')
-                    ->relationship('tmKelas', 'id')
+                    ->relationship('tmKelas', 'level')
                     ->required(),
                 Forms\Components\Select::make('sekolah_id')
                     ->relationship('sekolah', 'id')
@@ -47,7 +47,7 @@ class RombelResource extends Resource
                 Tables\Columns\TextColumn::make('tahunAjaran.id')
                     ->numeric()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('tmKelas.id')
+                Tables\Columns\TextColumn::make('tmKelas.level')
                     ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('sekolah.id')
@@ -74,7 +74,7 @@ class RombelResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
-   Tables\Actions\DeleteAction::make(),
+                Tables\Actions\DeleteAction::make(),
 
             ])
             ->bulkActions([

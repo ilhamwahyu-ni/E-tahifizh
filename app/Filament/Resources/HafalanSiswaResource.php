@@ -50,7 +50,7 @@ class HafalanSiswaResource extends Resource
                 Tables\Columns\TextColumn::make('siswa.id')
                     ->numeric()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('surah.id')
+                Tables\Columns\TextColumn::make('surah.nama')
                     ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('semester.id')
@@ -79,7 +79,7 @@ class HafalanSiswaResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
-   Tables\Actions\DeleteAction::make(),
+                Tables\Actions\DeleteAction::make(),
 
             ])
             ->bulkActions([

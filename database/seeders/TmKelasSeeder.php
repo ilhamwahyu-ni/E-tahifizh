@@ -13,15 +13,11 @@ class TmKelasSeeder extends Seeder
     public function run(): void
     {
         $levels = range(1, 6);
-        $rombels = ['a', 'b', 'c'];
 
         foreach ($levels as $level) {
-            foreach ($rombels as $rombel) {
-                TmKelas::factory()->create([
-                    'level' => (string)$level, // Cast level to string as per factory definition
-                    'nama_rombel' => $rombel,
-                ]);
-            }
+            TmKelas::factory()->create([
+                'level' => $level,
+            ]);
         }
     }
 }
