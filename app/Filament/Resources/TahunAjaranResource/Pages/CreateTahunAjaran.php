@@ -16,4 +16,21 @@ class CreateTahunAjaran extends CreateRecord
     {
         return $this->getResource()::getUrl('index');
     }
+
+    protected function afterCreate(): void
+    {
+        $tahunAjaran = $this->record;
+
+        // Create Semester Ganjil
+        $tahunAjaran->semesters()->create([
+            'nama' => 'Ganjil',
+            'status' => 'nonaktif', // Default status
+        ]);
+
+        // Create Semester Genap
+        $tahunAjaran->semesters()->create([
+            'nama' => 'Genap',
+            'status' => 'nonaktif', // Default status
+        ]);
+    }
 }
