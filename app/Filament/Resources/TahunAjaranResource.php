@@ -61,7 +61,7 @@ class TahunAjaranResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
-   Tables\Actions\DeleteAction::make(),
+                Tables\Actions\DeleteAction::make(),
 
             ])
             ->bulkActions([
@@ -74,7 +74,7 @@ class TahunAjaranResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            RelationManagers\SemestersRelationManager::class,
         ];
     }
 

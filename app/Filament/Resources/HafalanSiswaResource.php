@@ -92,7 +92,7 @@ class HafalanSiswaResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            RelationManagers\RiwayatHafalansRelationManager::class,
         ];
     }
 
