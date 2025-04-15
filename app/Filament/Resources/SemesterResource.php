@@ -12,6 +12,7 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Filament\Tables\Actions\Action;
 
 class SemesterResource extends Resource
 {
@@ -62,9 +63,30 @@ class SemesterResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
-   Tables\Actions\DeleteAction::make(),
+                Action::make('setActive')
+                    ->label('Set Active')
+                    ->icon('heroicon-o-check-circle')
+                    ->color('success')
+                    ->requiresConfirmation()
+                    ->action(function (Semester $record) {
+                        // Deactivate all other semesters
+                        Semester::query()
+                            ->where('id', '!=', $record->id)
+                            ->update(['is_active' => false]);
 
+                        // Activate the selected semester
+                        $record->update(['is_active' => true]);
+
+                        // Get the academic year (tahun ajaran) associated with this semester
+                        $tahunAjaran = $record->tahunAjaran;
+
+                        // Deactivate all other academic years and activate this one
+                        $tahunAjaran->query()
+                            ->where('id', '!=', $tahunAjaran->id)
+                            ->update(['is_active' => false]);
+                        $tahunAjaran->update(['is_active' => true]);
+                    })
+                    ->visible(fn(Semester $record) => !$record->is_active),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

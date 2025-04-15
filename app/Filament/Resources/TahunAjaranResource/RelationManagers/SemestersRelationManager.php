@@ -28,9 +28,9 @@ class SemestersRelationManager extends RelationManager
                     ])
                     ->required()
                     ->label('Semester'),
-                Forms\Components\Toggle::make('is_active')
-                    ->required()
-                    ->label('Aktif'),
+                // Forms\Components\Toggle::make('is_active')
+                //     // ->required()
+                //     ->label('Aktif'),
             ]);
     }
 
@@ -41,7 +41,7 @@ class SemestersRelationManager extends RelationManager
             ->columns([
                 Tables\Columns\TextColumn::make('type')
                     ->label('Semester')
-                    ->formatStateUsing(fn (string $state): string => match ($state) {
+                    ->formatStateUsing(fn(string $state): string => match ($state) {
                         '1' => 'Ganjil',
                         '2' => 'Genap',
                     }),
@@ -53,11 +53,11 @@ class SemestersRelationManager extends RelationManager
                 //
             ])
             ->headerActions([
-                Tables\Actions\CreateAction::make(),
+                // Tables\Actions\CreateAction::make(),
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+                // Tables\Actions\EditAction::make(),
+                // Tables\Actions\DeleteAction::make(),
                 Tables\Actions\Action::make('setAktif')
                     ->icon('heroicon-o-check-circle')
                     ->color('success')
