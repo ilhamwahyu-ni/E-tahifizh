@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Models\Semester;
 use App\Models\TahunAjaran;
 use App\Observers\SemesterObserver;
+use App\Observers\TahunAjaranObserver;
 use Filament\Support\Facades\FilamentView;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Event;
@@ -38,6 +39,6 @@ class AppServiceProvider extends ServiceProvider
             $event->extendSocialite('discord', \SocialiteProviders\Google\Provider::class);
         });
         Semester::observe(SemesterObserver::class);
-        TahunAjaran::observe(\App\Observers\TahunAjaranObserver::class);
+        TahunAjaran::observe(TahunAjaranObserver::class);
     }
 }

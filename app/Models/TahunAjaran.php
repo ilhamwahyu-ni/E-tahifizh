@@ -2,31 +2,17 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\SoftDeletes;
 
 class TahunAjaran extends Model
 {
-    use HasFactory, SoftDeletes;
-
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array
-     */
     protected $fillable = [
-        'tahun',
-        'nama',
+        'name',
         'is_active',
+        // ... other fillable attributes
     ];
 
-    /**
-     * The attributes that should be cast to native types.
-     *
-     * @var array
-     */
     protected $casts = [
         'is_active' => 'boolean',
     ];
@@ -36,8 +22,14 @@ class TahunAjaran extends Model
         return $this->hasMany(Semester::class);
     }
 
-    public function rombels(): HasMany
+    protected static function booted(): void
     {
-        return $this->hasMany(Rombel::class);
+        static::created(function ($tahunAjaran) {
+            // Create both semesters with is_active = false by default
+            $tahunAjaran->semesters()->createMany([
+                ['name' => 'Ganjil', 'type' => 1, 'is_active' => false],
+                ['name' => 'Genap', 'type' => 2, 'is_active' => false],
+            ]);
+        });
     }
 }

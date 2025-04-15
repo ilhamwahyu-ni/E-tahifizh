@@ -18,9 +18,8 @@ class Semester extends Model
 
     protected $fillable = [
         'type',
-        'name',
-        'is_active',
         'tahun_ajaran_id',
+        'is_active'
     ];
 
     protected $casts = [
