@@ -3,7 +3,9 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\SiswaResource\Pages;
-use App\Filament\Resources\SiswaResource\RelationManagers;
+// use App\Filament\Resources\SiswaResource\RelationManagers; // Keep if other RMs exist, remove if only these two
+use App\Filament\Resources\SiswaResource\RelationManagers\HafalanSiswasRelationManager; // Added import
+use App\Filament\Resources\SiswaResource\RelationManagers\RekapSemesterSiswasRelationManager; // Added import
 use App\Models\Siswa;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -89,7 +91,8 @@ class SiswaResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            HafalanSiswasRelationManager::class,
+            RekapSemesterSiswasRelationManager::class,
         ];
     }
 

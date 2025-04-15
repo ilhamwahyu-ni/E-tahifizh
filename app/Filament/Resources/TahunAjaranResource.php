@@ -86,6 +86,7 @@ class TahunAjaranResource extends Resource
     {
         return [
             RelationManagers\SemestersRelationManager::class,
+            RelationManagers\RombelsRelationManager::class,
         ];
     }
 
