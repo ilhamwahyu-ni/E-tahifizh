@@ -27,7 +27,7 @@ class HafalanSiswaResource extends Resource
                     ->relationship('siswa', 'id')
                     ->required(),
                 Forms\Components\Select::make('surah_id')
-                    ->relationship('surah', 'id')
+                    ->relationship('surah', 'nama')
                     ->required(),
                 Forms\Components\Select::make('semester_id')
                     ->relationship('semester', 'id')
