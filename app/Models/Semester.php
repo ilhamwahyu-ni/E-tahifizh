@@ -17,6 +17,7 @@ class Semester extends Model
     public const TYPE_GENAP = 2;
 
     protected $fillable = [
+        'name',
         'type',
         'tahun_ajaran_id',
         'is_active'
