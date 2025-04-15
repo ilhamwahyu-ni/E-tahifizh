@@ -2,29 +2,29 @@
 
 namespace Database\Factories;
 
-use Illuminate\Database\Eloquent\Factories\Factory;
-use Illuminate\Support\Str;
 use App\Models\Semester;
-use App\Models\TahunAjaran;
+use App\Models\TahunAjaran; // Import TahunAjaran
+use Illuminate\Database\Eloquent\Factories\Factory;
 
+/**
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Semester>
+ */
 class SemesterFactory extends Factory
 {
     /**
-     * The name of the factory's corresponding model.
-     *
-     * @var string
-     */
-    protected $model = Semester::class;
-
-    /**
      * Define the model's default state.
+     *
+     * @return array<string, mixed>
      */
     public function definition(): array
     {
+        // Pastikan ada TahunAjaran sebelum membuat Semester
+        $tahunAjaran = TahunAjaran::inRandomOrder()->first() ?? TahunAjaran::factory()->create();
+
         return [
-            'nama' => fake()->randomElement(["Ganjil","Genap"]),
-            'tahun_ajaran_id' => TahunAjaran::factory(),
-            'status' => fake()->randomElement(["aktif","nonaktif"]),
+            'type' => $this->faker->randomElement([Semester::TYPE_GANJIL, Semester::TYPE_GENAP]),
+            'is_active' => $this->faker->boolean(80), // 80% chance true
+            'tahun_ajaran_id' => $tahunAjaran->id
         ];
     }
 }

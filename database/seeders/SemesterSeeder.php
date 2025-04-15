@@ -25,20 +25,20 @@ class SemesterSeeder extends Seeder
             return; // Stop if the specific TahunAjaran isn't found
         }
 
-        // Create Ganjil semester using recycle
+        // Create Ganjil semester using recycle (type 1)
         Semester::factory()
             ->recycle($tahunAjaran) // Recycle the specific TahunAjaran instance
             ->create([
-                'nama' => 'Ganjil',
-                'status' => 'aktif', // Default status
+                'type' => 1, // 1: Ganjil
+                'is_active' => true, // Default active status
             ]);
 
-        // Create Genap semester using recycle
+        // Create Genap semester using recycle (type 2)
         Semester::factory()
             ->recycle($tahunAjaran) // Recycle the specific TahunAjaran instance
             ->create([
-                'nama' => 'Genap',
-                'status' => 'nonaktif', // Default status, maybe only one is active? Adjust if needed.
+                'type' => 2, // 2: Genap
+                'is_active' => false, // Default inactive status
             ]);
     }
 }
