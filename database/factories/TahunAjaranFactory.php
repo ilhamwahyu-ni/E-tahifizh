@@ -21,9 +21,16 @@ class TahunAjaranFactory extends Factory
     public function definition(): array
     {
         return [
-            'tahun' => fake()->regexify('[A-Za-z0-9]{9}'),
-            'nama' => fake()->regexify('[A-Za-z0-9]{100}'),
-            'status' => fake()->randomElement(["aktif","nonaktif"]),
+            'tahun' => fake()->unique()->numerify('####/####'),
+            'nama' => 'Tahun Ajaran ' . fake()->unique()->numerify('####/####'),
+            'is_active' => false,
         ];
+    }
+
+    public function active(): self
+    {
+        return $this->state(fn(array $attributes) => [
+            'is_active' => true,
+        ]);
     }
 }

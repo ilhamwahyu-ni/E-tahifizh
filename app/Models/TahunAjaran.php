@@ -19,7 +19,7 @@ class TahunAjaran extends Model
     protected $fillable = [
         'tahun',
         'nama',
-        'status',
+        'is_active',
     ];
 
     /**
@@ -28,7 +28,7 @@ class TahunAjaran extends Model
      * @var array
      */
     protected $casts = [
-        'id' => 'integer',
+        'is_active' => 'boolean',
     ];
 
     public function semesters(): HasMany

@@ -25,12 +25,16 @@ class TahunAjaranResource extends Resource
             ->schema([
                 Forms\Components\TextInput::make('tahun')
                     ->required()
-                    ->maxLength(9),
+                    ->maxLength(9)
+                    ->unique(ignoreRecord: true),
                 Forms\Components\TextInput::make('nama')
                     ->required()
                     ->maxLength(100),
-                Forms\Components\TextInput::make('status')
-                    ->required(),
+                Forms\Components\Toggle::make('is_active')
+                    ->required()
+                    ->default(false)
+                    ->helperText('Hanya satu tahun ajaran yang dapat aktif pada satu waktu.')
+                    ->inline(false),
             ]);
     }
 
@@ -38,10 +42,12 @@ class TahunAjaranResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('tahun')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('nama')
-                    ->searchable(),
+                Tables\Columns\TextColumn::make('tahun')->sortable()->searchable(),
+                Tables\Columns\TextColumn::make('nama')->sortable()->searchable(),
+                Tables\Columns\IconColumn::make('is_active')
+                    ->boolean()
+                    ->sortable()
+                    ->toggleable(),
                 Tables\Columns\TextColumn::make('status'),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
@@ -57,18 +63,23 @@ class TahunAjaranResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                //
+                Tables\Filters\Filter::make('is_active')
+                    ->query(fn(Builder $query): Builder => $query->where('is_active', true))
+                    ->label('Aktif'),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
-   Tables\Actions\DeleteAction::make(),
-
+                Tables\Actions\Action::make('set_active')
+                    ->label('Set Aktif')
+                    ->icon('heroicon-o-check-circle')
+                    ->requiresConfirmation()
+                    ->action(function (TahunAjaran $record) {
+                        TahunAjaran::where('is_active', true)->update(['is_active' => false]);
+                        $record->update(['is_active' => true]);
+                    })
+                    ->hidden(fn(TahunAjaran $record): bool => $record->is_active),
             ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
-            ]);
+            ->bulkActions([]);
     }
 
     public static function getRelations(): array

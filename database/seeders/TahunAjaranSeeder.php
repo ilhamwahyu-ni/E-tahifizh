@@ -14,8 +14,8 @@ class TahunAjaranSeeder extends Seeder
     {
         TahunAjaran::factory()->create([
             'tahun' => '2024/2026',
-            'nama' => 'Tahun Ajaran 2024/2026', // Default name based on the year
-            'status' => 'aktif', // Default status
+            'nama' => 'Tahun Ajaran 2024/2026',
+            'is_active' => false,
         ]);
     }
 }
