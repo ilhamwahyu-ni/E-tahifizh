@@ -24,12 +24,12 @@ class SiswaFactory extends Factory
     public function definition(): array
     {
         return [
-            'nama' => fake()->regexify('[A-Za-z0-9]{100}'),
-            'nis' => fake()->regexify('[A-Za-z0-9]{20}'),
+            'nama' => fake()->name(),
+            'nis' => fake()->randomNumber(8, 8),
             'rombel_id' => Rombel::factory(),
             'sekolah_id' => Sekolah::factory(),
-            'jenis_kelamin' => fake()->randomElement(["L","P"]),
-            'status' => fake()->randomElement(["aktif","nonaktif","lulus","pindah"]),
+            'jenis_kelamin' => fake()->randomElement(["L", "P"]),
+            'status' => fake()->randomElement(["aktif", "nonaktif", "lulus", "pindah"]),
         ];
     }
 }
