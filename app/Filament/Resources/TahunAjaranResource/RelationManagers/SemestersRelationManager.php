@@ -21,30 +21,33 @@ class SemestersRelationManager extends RelationManager
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('nama')
-                    ->required()
-                    ->maxLength(255),
-                Forms\Components\Select::make('status')
+                Forms\Components\Select::make('type')
                     ->options([
-                        'aktif' => 'Aktif',
-                        'nonaktif' => 'Nonaktif',
+                        1 => 'Ganjil',
+                        2 => 'Genap',
                     ])
-                    ->required(),
+                    ->required()
+                    ->label('Semester'),
+                Forms\Components\Toggle::make('is_active')
+                    ->required()
+                    ->label('Aktif'),
             ]);
     }
 
     public function table(Table $table): Table
     {
         return $table
-            ->recordTitleAttribute('nama')
+            ->recordTitleAttribute('type')
             ->columns([
-                Tables\Columns\TextColumn::make('nama'),
-                Tables\Columns\TextColumn::make('status')
-                    ->badge()
-                    ->color(fn(string $state): string => match ($state) {
-                        'aktif' => 'success',
-                        'nonaktif' => 'danger',
+                Tables\Columns\TextColumn::make('type')
+                    ->label('Semester')
+                    ->formatStateUsing(fn (string $state): string => match ($state) {
+                        '1' => 'Ganjil',
+                        '2' => 'Genap',
                     }),
+                Tables\Columns\IconColumn::make('is_active')
+                    ->label('Aktif')
+                    ->boolean(),
             ])
             ->filters([
                 //
@@ -59,13 +62,13 @@ class SemestersRelationManager extends RelationManager
                     ->icon('heroicon-o-check-circle')
                     ->color('success')
                     ->requiresConfirmation()
-                    ->visible(fn($record) => $record->status === 'nonaktif')
+                    ->visible(fn($record) => !$record->is_active)
                     ->action(function ($record) {
                         DB::transaction(function () use ($record) {
                             $record->tahunAjaran->semesters()
                                 ->where('id', '!=', $record->id)
-                                ->update(['status' => 'nonaktif']);
-                            $record->update(['status' => 'aktif']);
+                                ->update(['is_active' => false]);
+                            $record->update(['is_active' => true]);
                         });
                         Notification::make()
                             ->success()

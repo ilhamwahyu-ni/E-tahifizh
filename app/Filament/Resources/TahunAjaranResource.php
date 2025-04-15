@@ -12,8 +12,6 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
-use Filament\Notifications\Notification;
-use Illuminate\Support\Facades\DB;
 
 class TahunAjaranResource extends Resource
 {
@@ -63,36 +61,8 @@ class TahunAjaranResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
-                Tables\Actions\Action::make('setAktif')
-                    ->icon('heroicon-o-check-circle')
-                    ->color('success')
-                    ->requiresConfirmation()
-                    ->visible(fn($record) => $record->status === 'nonaktif')
-                    ->action(function ($record) {
-                        DB::transaction(function () use ($record) {
-                            // Nonaktifkan semua tahun ajaran lain
-                            TahunAjaran::where('id', '!=', $record->id)
-                                ->update(['status' => 'nonaktif']);
+   Tables\Actions\DeleteAction::make(),
 
-                            // Aktifkan tahun ajaran ini
-                            $record->update(['status' => 'aktif']);
-
-                            // Nonaktifkan semua semester di tahun ajaran ini
-                            $record->semesters()->update(['status' => 'nonaktif']);
-
-                            // Aktifkan semester ganjil sebagai default
-                            $record->semesters()
-                                ->where('nama', 'like', '%ganjil%')
-                                ->update(['status' => 'aktif']);
-                        });
-
-                        Notification::make()
-                            ->success()
-                            ->title('Tahun ajaran berhasil diaktifkan')
-                            ->body('Semester ganjil telah diset sebagai semester aktif')
-                            ->send();
-                    })
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
