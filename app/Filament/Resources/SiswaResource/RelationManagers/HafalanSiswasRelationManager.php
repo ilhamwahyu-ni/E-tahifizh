@@ -39,7 +39,7 @@ class HafalanSiswasRelationManager extends RelationManager
             // Optionally, handle the case where no semester is active,
             // maybe return an empty result or show all?
             // For now, let's return an empty result to avoid showing incorrect data.
-             $query->whereRaw('1 = 0'); // Ensures no records are returned
+            $query->whereRaw('1 = 0'); // Ensures no records are returned
         }
         return $query;
     }
@@ -50,27 +50,29 @@ class HafalanSiswasRelationManager extends RelationManager
         // Simple form for creating new hafalan targets
         return $form
             ->schema([
+                Forms\Components\Select::make('siswa_id')
+                    ->relationship('siswa', 'id')
+                    ->required(),
                 Forms\Components\Select::make('surah_id')
-                    ->label('Surah Target')
-                    ->relationship('surah', 'nama') // Assuming 'nama' is the display column in Surah
-                    ->searchable()
-                    ->preload()
+                    ->relationship('surah', 'nama')
+                    ->required(),
+                // Forms\Components\Select::make('semester_id')
+                //     ->relationship('semester', 'id')
+                //     ->required(),
+                Forms\Components\TextInput::make('tingkat_kelas')
                     ->required()
-                    ->createOptionForm([ // Allow creating new Surah if needed
-                        Forms\Components\TextInput::make('nama')->required(),
-                        Forms\Components\TextInput::make('jumlah_ayat')->numeric()->required(),
-                    ]),
-                 // semester_id will be set automatically based on the active semester
-                 // siswa_id is set automatically by the relation manager
-            ])->mutateFormDataUsing(function (array $data): array {
-                // Automatically set the active semester ID when creating
-                $activeSemesterId = Semester::where('is_active', true)->value('id');
-                if ($activeSemesterId) {
-                    $data['semester_id'] = $activeSemesterId;
-                }
-                // You might want to add validation here to ensure an active semester exists before creation
-                return $data;
-            });
+                    ->maxLength(10),
+                Forms\Components\TextInput::make('nilai')
+                    ->required()
+                    ->maxLength(10),
+                Forms\Components\TextInput::make('status_hafalan')
+                    ->required(),
+
+                // semester_id will be set automatically based on the active semester
+                // siswa_id is set automatically by the relation manager
+                Forms\Components\Hidden::make('semester_id')
+                    ->default(fn() => Semester::where('is_active', true)->value('id'))
+            ]);
     }
 
     public function table(Table $table): Table
@@ -78,24 +80,41 @@ class HafalanSiswasRelationManager extends RelationManager
         return $table
             ->recordTitleAttribute('surah.nama') // Use surah name as title
             ->columns([
+
                 Tables\Columns\TextColumn::make('surah.nama')
-                    ->label('Surah')
-                    ->searchable()
                     ->sortable(),
+                Tables\Columns\TextColumn::make('semester.id')
+                    ->numeric()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('tingkat_kelas')
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('nilai')
-                    ->label('Nilai Terakhir')
-                    ->placeholder('-'), // Placeholder if no riwayat exists yet
-                Tables\Columns\TextColumn::make('status_hafalan')
-                    ->label('Status Terakhir')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('status_hafalan')->label('Status Terakhir')
                     ->badge()
-                     ->color(fn (?string $state): string => match ($state) {
+                    ->color(fn(?string $state): string => match ($state) {
                         'belum_hafal' => 'gray',
                         'sedang_hafal' => 'warning',
                         'selesai' => 'success',
                         default => 'gray',
                     })
                     ->placeholder('-'), // Placeholder if no riwayat exists yet
+                Tables\Columns\TextColumn::make('created_at')
+                    ->dateTime()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                Tables\Columns\TextColumn::make('updated_at')
+                    ->dateTime()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                Tables\Columns\TextColumn::make('deleted_at')
+                    ->dateTime()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
             ])
+            //     Tables\Columns\TextColumn::make('status_hafalan')
+            //
+            // ])
             ->filters([
                 // Add filters if needed
             ])
@@ -114,10 +133,10 @@ class HafalanSiswasRelationManager extends RelationManager
                             ->label('Catatan Guru'),
                         // Assuming nilai is numeric 0-100 or similar
                         TextInput::make('nilai_baru')
-                             ->label('Nilai')
-                             ->numeric()
-                             ->minValue(0)
-                             ->maxValue(100), // Adjust max value as needed
+                            ->label('Nilai')
+                            ->numeric()
+                            ->minValue(0)
+                            ->maxValue(100), // Adjust max value as needed
                         Select::make('status_hafalan_baru')
                             ->label('Status Hafalan')
                             ->options([
@@ -144,15 +163,16 @@ class HafalanSiswasRelationManager extends RelationManager
 
                 Action::make('Lihat Riwayat')
                     ->icon('heroicon-o-eye')
-                    ->modalContent(fn (HafalanSiswa $record) =>
+                    ->modalContent(
+                        fn(HafalanSiswa $record) =>
                         View::make('filament.riwayat-hafalan-modal', [
                             'riwayats' => $record->riwayatHafalans()->orderBy('tanggal', 'desc')->get()
-                         ])
-                     ) // <- This parenthesis closes modalContent
-                      // ->infolist([ ... ]) // Alternative using Infolist
-                     ->modalHeading(fn (HafalanSiswa $record): string => 'Riwayat Hafalan Surah: ' . $record->surah->nama)
-                     ->modalSubmitAction(false) // No submit button needed
-                     ->modalCancelActionLabel('Tutup'),
+                        ])
+                    ) // <- This parenthesis closes modalContent
+                    // ->infolist([ ... ]) // Alternative using Infolist
+                    ->modalHeading(fn(HafalanSiswa $record): string => 'Riwayat Hafalan Surah: ' . $record->surah->nama)
+                    ->modalSubmitAction(false) // No submit button needed
+                    ->modalCancelActionLabel('Tutup'),
 
 
                 // Edit might be limited if updates happen via Riwayat
