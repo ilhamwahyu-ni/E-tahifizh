@@ -102,7 +102,7 @@ class HafalanSiswasRelationManager extends RelationManager
             ->headerActions([
                 Tables\Actions\CreateAction::make()->createAnother(false)
                     ->label('Tambah Hafalan') // Ubah label jika perlu
-                    ->modalHeading('') 
+                    ->modalHeading('')
                     ->mutateFormDataUsing(function (array $data): array {
                         // Logika mencari dan menetapkan semester aktif
                         $activeSemesterId = Semester::where('is_active', true)->value('id');
@@ -125,11 +125,24 @@ class HafalanSiswasRelationManager extends RelationManager
                     })
                     ->form([ // Form HANYA untuk Create Action
                         Forms\Components\Select::make('surah_id')
-                            ->relationship('surah', 'nama') // Pastikan relasi 'surah' ada di model HafalanSiswa
+                            ->relationship('surah', 'nama') // Relasi ke model Surah
                             ->searchable()
                             ->preload()
                             ->required()
-                            ->label('Pilih Surah'),
+                            ->label('Pilih Surah')
+                            ->options(function () {
+                                $siswaId = $this->getOwnerRecord()->id; // Ambil ID siswa dari relasi
+                                $activeSemesterId = Semester::where('is_active', true)->value('id'); // Ambil semester aktif
+
+                                // Ambil ID surat yang sudah dihafal oleh siswa ini
+                                $alreadyMemorizedSurahIds = \App\Models\HafalanSiswa::where('siswa_id', $siswaId)
+                                    ->pluck('surah_id')
+                                    ->toArray();
+
+                                // Filter surat yang belum dihafal
+                                return \App\Models\Surah::whereNotIn('id', $alreadyMemorizedSurahIds)
+                                    ->pluck('nama', 'id');
+                            }),
                         Forms\Components\TextInput::make('nilai')
                             ->numeric()
                             ->default(0) // Nilai default saat buat baru
