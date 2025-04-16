@@ -28,8 +28,8 @@ class RombelFactory extends Factory
             'tahun_ajaran_id' => TahunAjaran::factory(),
             'tm_kelas_id' => TmKelas::factory(),
             'sekolah_id' => Sekolah::factory(),
-            'nama_rombongan' => fake()->regexify('[A-Za-z0-9]{100}'),
-            'status' => fake()->randomElement(["aktif","nonaktif"]),
+            'nama_rombongan' => fake()->company(),
+            'status' => fake()->randomElement(["aktif", "nonaktif"]),
         ];
     }
 }

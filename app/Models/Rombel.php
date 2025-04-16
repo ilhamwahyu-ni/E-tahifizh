@@ -53,13 +53,15 @@ class Rombel extends Model
         return $this->belongsTo(Sekolah::class);
     }
 
-    public function siswas(): HasMany
-    {
-        return $this->hasMany(Siswa::class);
-    }
+
 
     public function hafalanSiswa(): HasManyThrough
     {
         return $this->hasManyThrough(HafalanSiswa::class, Siswa::class);
+    }
+
+    public function siswa(): HasMany
+    {
+        return $this->hasMany(Siswa::class);
     }
 }

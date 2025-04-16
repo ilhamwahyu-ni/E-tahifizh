@@ -55,7 +55,8 @@ class SiswaResource extends Resource
                 //make count hafalan
                 Tables\Columns\TextColumn::make('hafalan_siswas_count') // Ensure lowercase and snake_case
                     ->counts('hafalanSiswas') // Ensure the relationship name matches the model
-                    ->label('Hafalan Count'),
+                    ->label('Hafalan Count')
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('rombel.id')
                     ->numeric()
                     ->sortable(),

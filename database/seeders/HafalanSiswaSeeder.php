@@ -53,7 +53,7 @@ class HafalanSiswaSeeder extends Seeder
         // 4. Find all Surahs (assuming SurahSeeder ran)
         $surahs = Surah::all();
         if ($surahs->isEmpty()) {
-             if ($this->command) {
+            if ($this->command) {
                 $this->command->warn("No Surahs found. Skipping HafalanSiswa seeding.");
             }
             return;
@@ -62,16 +62,16 @@ class HafalanSiswaSeeder extends Seeder
         // 5. Create HafalanSiswa records using random valid combinations
         // Create, for example, 50 hafalan records randomly assigning
         // a valid siswa, semester (from the correct TA), and surah.
-        $recordCount = 50; // Adjust as needed
+        $recordCount = 200; // Adjust as needed
         for ($i = 0; $i < $recordCount; $i++) {
             HafalanSiswa::factory()
                 ->recycle($siswas->random())    // Recycle a random valid Siswa
                 ->recycle($semesters->random()) // Recycle a random valid Semester
                 ->recycle($surahs->random())    // Recycle a random Surah
                 ->create();
-                // Note: The factory will likely set 'tingkat_kelas' based on the Siswa's Rombel->TmKelas,
-                // or you might need to adjust the factory or pass it explicitly if needed.
-                // ->create(['tingkat_kelas' => $siswa->rombel->tmKelas->tingkat]); // Example if needed
+            // Note: The factory will likely set 'tingkat_kelas' based on the Siswa's Rombel->TmKelas,
+            // or you might need to adjust the factory or pass it explicitly if needed.
+            // ->create(['tingkat_kelas' => $siswa->rombel->tmKelas->tingkat]); // Example if needed
         }
 
         // // Alternative: Create one record per siswa per surah for one semester?

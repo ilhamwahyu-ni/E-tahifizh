@@ -73,21 +73,19 @@ class HafalanSiswasRelationManager extends RelationManager
                         default => null, // Use null for no color
                     })
                     ->placeholder('-'),
+                //tambahkan kolom rombel
+                Tables\Columns\TextColumn::make('siswa.rombel.id')
+                    ->label('Rombel')
+                    ->sortable()
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('semester.nama')
                     ->label('Semester')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('semester.tahunAjaran.nama')
                     ->label('Tahun Ajaran')
                     ->sortable(),
-                // --- Kolom Timestamp (Opsional) ---
-                Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('updated_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+
+                // Kolom lain yang relevan bisa ditambahkan di sini
             ])
 
             ->filters([
@@ -133,7 +131,7 @@ class HafalanSiswasRelationManager extends RelationManager
                             ->options(function () {
                                 $siswaId = $this->getOwnerRecord()->id; // Ambil ID siswa dari relasi
                                 $activeSemesterId = Semester::where('is_active', true)->value('id'); // Ambil semester aktif
-
+                    
                                 // Ambil ID surat yang sudah dihafal oleh siswa ini
                                 $alreadyMemorizedSurahIds = \App\Models\HafalanSiswa::where('siswa_id', $siswaId)
                                     ->pluck('surah_id')

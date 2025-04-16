@@ -12,7 +12,7 @@ use Illuminate\Database\Eloquent\Builder;
 use App\Filament\Resources\RombelResource\Pages;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Resources\RombelResource\RelationManagers;
-use App\Filament\Resources\RombelResource\RelationManagers\SiswasRelationManager;
+use App\Filament\Resources\RombelResource\RelationManagers\SiswaRelationManager;
 
 class RombelResource extends Resource
 {
@@ -88,7 +88,7 @@ class RombelResource extends Resource
     public static function getRelations(): array
     {
         return [
-            SiswasRelationManager::class,
+            SiswaRelationManager::class,
         ];
     }
 

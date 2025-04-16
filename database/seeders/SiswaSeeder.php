@@ -22,30 +22,30 @@ class SiswaSeeder extends Seeder
 
         // Check if any Rombels exist
         if ($rombels->isEmpty()) {
-             // Use command output if running via artisan console
-             if ($this->command) {
-                 $this->command->warn('No Rombels found. Skipping Siswa seeding.');
-             }
-             return; // Stop if no Rombels to assign Siswa to
+            // Use command output if running via artisan console
+            if ($this->command) {
+                $this->command->warn('No Rombels found. Skipping Siswa seeding.');
+            }
+            return; // Stop if no Rombels to assign Siswa to
         }
 
         // For each Rombel, create some Siswa instances
         foreach ($rombels as $rombel) {
             // Ensure the rombel has a sekolah loaded - essential for recycling
             if (!$rombel->sekolah) {
-                 if ($this->command) {
+                if ($this->command) {
                     $this->command->warn("Rombel ID {$rombel->id} is missing its Sekolah relationship. Skipping Siswa creation for this Rombel.");
-                 }
-                 continue; // Skip this Rombel if its Sekolah is missing
+                }
+                continue; // Skip this Rombel if its Sekolah is missing
             }
 
             Siswa::factory()
-                ->count(10) // Create 10 students per Rombel (adjust count as needed)
+                ->count(32) // Create 10 students per Rombel (adjust count as needed)
                 ->recycle($rombel) // Use this specific Rombel instance
                 ->recycle($rombel->sekolah) // Use the specific Sekolah instance from this Rombel
                 ->create();
-                // Note: The factory should handle setting 'rombel_id' and 'sekolah_id'
-                // automatically when using recycle with model instances.
+            // Note: The factory should handle setting 'rombel_id' and 'sekolah_id'
+            // automatically when using recycle with model instances.
         }
     }
 }
