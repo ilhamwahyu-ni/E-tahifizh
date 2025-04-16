@@ -26,6 +26,11 @@ class SiswaRelationManager extends RelationManager
                 Forms\Components\TextInput::make('nis')
                     ->required()
                     ->maxLength(255),
+                Forms\Components\TextInput::make('nama')
+                    ->required()
+                    ->maxLength(100),
+                Forms\Components\TextInput::make('jenis_kelamin')
+                    ->required(),
             ]);
     }
 
@@ -34,6 +39,10 @@ class SiswaRelationManager extends RelationManager
         return $table
             ->recordTitleAttribute('nis')
             ->columns([
+                //add number count from number one
+                Tables\Columns\TextColumn::make('index')
+                    ->label('No')
+                    ->rowIndex(),
                 Tables\Columns\TextColumn::make('nis')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('nama')
@@ -45,7 +54,7 @@ class SiswaRelationManager extends RelationManager
                     ->label('Jumlah Hafalan')
                     ->sortable(),
 
-            ])->defaultPaginationPageOption(32)
+            ])
             ->filters([
                 //
             ])
@@ -63,7 +72,7 @@ class SiswaRelationManager extends RelationManager
                     ->url(fn(Siswa $record): string => SiswaResource::getUrl('edit', ['record' => $record])), // Arahkan ke halaman view
 
                 // Tetap ada tombol untuk mengeluarkan siswa dari rombel
-            ])
+            ])->defaultPaginationPageOption(32)
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),

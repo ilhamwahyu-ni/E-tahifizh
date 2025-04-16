@@ -24,7 +24,10 @@ class RombelResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\Select::make('tahun_ajaran_id')
+                Forms\Components\Select::make('sekolah.nama')->disabled()
+                    ->relationship('sekolah', 'nama')
+                    ->required(),
+                Forms\Components\Select::make('tahun_ajaran_id')->disabled()
                     ->relationship('tahunAjaran', 'nama')
                     ->required(),
                 Forms\Components\Select::make('tm_kelas_id')
@@ -34,9 +37,6 @@ class RombelResource extends Resource
                 Forms\Components\TextInput::make('nama_rombongan')
                     ->required()
                     ->maxLength(100),
-                Forms\Components\Select::make('sekolah.nama')->disabled()
-                    ->relationship('sekolah', 'nama')
-                    ->required(),
                 Forms\Components\TextInput::make('status')
                     ->required(),
             ]);
@@ -46,7 +46,9 @@ class RombelResource extends Resource
     {
         return $table
             ->columns([
-
+                Tables\Columns\TextColumn::make('index')
+                    ->label('No')
+                    ->rowIndex(),
                 Tables\Columns\TextColumn::make('tmKelas.level')
                     ->label('Kelas')
                     ->numeric()

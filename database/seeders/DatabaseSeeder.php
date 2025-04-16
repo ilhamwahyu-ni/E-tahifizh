@@ -36,8 +36,7 @@ class DatabaseSeeder extends Seeder
                 SiswaSeeder::class,
                 RekapSemesterSiswaSeeder::class,
                 HafalanSiswaSeeder::class,
-                RiwayatHafalanSeeder::class,
-              
+
             ]
         );
     }
