@@ -14,6 +14,12 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Filament\Infolists; // Import namespace Infolists
+use Filament\Infolists\Infolist;
+use Filament\Infolists\Components\TextEntry;
+use Filament\Infolists\Components\BadgeEntry;
+use Filament\Infolists\Components\Section; // Opsional: untuk pengelompokan
+use Filament\Infolists\Components\Grid; // Opsional: untuk layout
 
 class SiswaResource extends Resource
 {

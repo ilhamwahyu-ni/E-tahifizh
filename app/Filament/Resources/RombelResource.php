@@ -25,17 +25,18 @@ class RombelResource extends Resource
         return $form
             ->schema([
                 Forms\Components\Select::make('tahun_ajaran_id')
-                    ->relationship('tahunAjaran', 'id')
+                    ->relationship('tahunAjaran', 'nama')
                     ->required(),
                 Forms\Components\Select::make('tm_kelas_id')
+                    ->label('Kelas')
                     ->relationship('tmKelas', 'level')
-                    ->required(),
-                Forms\Components\Select::make('sekolah_id')
-                    ->relationship('sekolah', 'id')
                     ->required(),
                 Forms\Components\TextInput::make('nama_rombongan')
                     ->required()
                     ->maxLength(100),
+                Forms\Components\Select::make('sekolah.nama')->disabled()
+                    ->relationship('sekolah', 'nama')
+                    ->required(),
                 Forms\Components\TextInput::make('status')
                     ->required(),
             ]);
@@ -45,30 +46,16 @@ class RombelResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('tahunAjaran.id')
-                    ->numeric()
-                    ->sortable(),
+
                 Tables\Columns\TextColumn::make('tmKelas.level')
+                    ->label('Kelas')
                     ->numeric()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('sekolah.id')
-                    ->numeric()
-                    ->sortable(),
+
                 Tables\Columns\TextColumn::make('nama_rombongan')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('status'),
-                Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('updated_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('deleted_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+
+
             ])
             ->filters([
                 //

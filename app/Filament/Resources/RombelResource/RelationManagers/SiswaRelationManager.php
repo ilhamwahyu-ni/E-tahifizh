@@ -45,7 +45,7 @@ class SiswaRelationManager extends RelationManager
                     ->label('Jumlah Hafalan')
                     ->sortable(),
 
-            ])
+            ])->defaultPaginationPageOption(32)
             ->filters([
                 //
             ])
@@ -58,7 +58,7 @@ class SiswaRelationManager extends RelationManager
                 // Opsi 2: Tombol "Kelola" atau "Lihat Detail" (mengarah ke View Page Siswa)
                 // Ini berguna jika halaman View SiswaResource Anda juga menampilkan Relation Manager
                 Tables\Actions\Action::make('kelola_siswa')
-                    ->label('Kelola Siswa')
+                    ->label('Kelola Tahfizh')
                     ->icon('heroicon-m-user-circle') // Ganti ikon jika perlu
                     ->url(fn(Siswa $record): string => SiswaResource::getUrl('edit', ['record' => $record])), // Arahkan ke halaman view
 
