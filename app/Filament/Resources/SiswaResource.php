@@ -78,7 +78,7 @@ class SiswaResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
-   Tables\Actions\DeleteAction::make(),
+                Tables\Actions\DeleteAction::make(),
 
             ])
             ->bulkActions([
@@ -92,7 +92,7 @@ class SiswaResource extends Resource
     {
         return [
             HafalanSiswasRelationManager::class,
-            RekapSemesterSiswasRelationManager::class,
+            // RekapSemesterSiswasRelationManager::class,
         ];
     }
 

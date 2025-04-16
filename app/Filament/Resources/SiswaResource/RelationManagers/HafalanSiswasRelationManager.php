@@ -45,36 +45,6 @@ class HafalanSiswasRelationManager extends RelationManager
     }
 
 
-    public function form(Form $form): Form
-    {
-        // Simple form for creating new hafalan targets
-        return $form
-            ->schema([
-                Forms\Components\Select::make('siswa_id')
-                    ->relationship('siswa', 'id')
-                    ->required(),
-                Forms\Components\Select::make('surah_id')
-                    ->relationship('surah', 'nama')
-                    ->required(),
-                // Forms\Components\Select::make('semester_id')
-                //     ->relationship('semester', 'id')
-                //     ->required(),
-                Forms\Components\TextInput::make('tingkat_kelas')
-                    ->required()
-                    ->maxLength(10),
-                Forms\Components\TextInput::make('nilai')
-                    ->required()
-                    ->maxLength(10),
-                Forms\Components\TextInput::make('status_hafalan')
-                    ->required(),
-
-                // semester_id will be set automatically based on the active semester
-                // siswa_id is set automatically by the relation manager
-                Forms\Components\Hidden::make('semester_id')
-                    ->default(fn() => Semester::where('is_active', true)->value('id'))
-            ]);
-    }
-
     public function table(Table $table): Table
     {
         return $table
@@ -82,23 +52,33 @@ class HafalanSiswasRelationManager extends RelationManager
             ->columns([
 
                 Tables\Columns\TextColumn::make('surah.nama')
+                    ->label('Surah Target')
+                    ->searchable()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('semester.id')
-                    ->numeric()
+                Tables\Columns\TextColumn::make('semester.nama')
+                    ->label('Semester')
                     ->sortable(),
-                Tables\Columns\TextColumn::make('tingkat_kelas')
-                    ->searchable(),
+                Tables\Columns\TextColumn::make('semester.tahunAjaran.nama')
+                    ->label('Tahun Ajaran')
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('tingkat_kelas') // Kolom ini opsional, tampilkan jika relevan
+                    ->label('Kelas Saat Target Dibuat')
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('nilai')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('status_hafalan')->label('Status Terakhir')
+                // --- Pastikan logika match ini sesuai ---
+                Tables\Columns\TextColumn::make('status_hafalan')
+                    ->label('Status Terakhir')
                     ->badge()
-                    ->color(fn(?string $state): string => match ($state) {
-                        'belum_hafal' => 'gray',
-                        'sedang_hafal' => 'warning',
-                        'selesai' => 'success',
-                        default => 'gray',
+                    ->color(fn(?string $state): ?string => match (strtolower($state)) {
+                        'belum' => 'gray',    // Sesuaikan dengan value Select form
+                        'proses' => 'warning', // Sesuaikan dengan value Select form
+                        'selesai' => 'success', // Sesuaikan dengan value Select form
+                        default => null, // Use null for no color
                     })
-                    ->placeholder('-'), // Placeholder if no riwayat exists yet
+                    ->placeholder('-'),
+                // --- Kolom Timestamp (Opsional) ---
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -107,76 +87,88 @@ class HafalanSiswasRelationManager extends RelationManager
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('deleted_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
             ])
-            //     Tables\Columns\TextColumn::make('status_hafalan')
-            //
-            // ])
+
             ->filters([
-                // Add filters if needed
+                Tables\Filters\SelectFilter::make('semester_id')
+                    // Menggunakan options() lebih eksplisit di sini, sudah benar
+                    ->options(fn() => \App\Models\Semester::with('tahunAjaran')->get()->mapWithKeys(fn($semester) => [
+                        $semester->id => "{$semester->nama} ({$semester->tahunAjaran->nama})",
+                    ]))
+                    ->label('Filter Semester'),
+                // Filter lain bisa ditambahkan di sini jika perlu
             ])
             ->headerActions([
-                Tables\Actions\CreateAction::make(),
+                Tables\Actions\CreateAction::make()
+                    ->label('Tambah Hafalan') // Ubah label jika perlu
+                    ->mutateFormDataUsing(function (array $data): array {
+                        // Logika mencari dan menetapkan semester aktif
+                        $activeSemesterId = Semester::where('is_active', true)->value('id');
+                        if (!$activeSemesterId) {
+                            // Kirim notifikasi error jika tidak ada semester aktif
+                            \Filament\Notifications\Notification::make()
+                                ->title('Gagal Menambahkan Data')
+                                ->body('Tidak ada semester aktif yang ditemukan. Silakan aktifkan semester terlebih dahulu.')
+                                ->danger()
+                                ->send();
+                            // Batalkan proses create dengan pesan yang lebih jelas
+                            throw \Illuminate\Validation\ValidationException::withMessages([
+                                'semester_id' => 'Tidak ada semester aktif yang ditemukan. Silakan aktifkan semester terlebih dahulu.',
+                            ]);
+                        }
+                        $data['semester_id'] = $activeSemesterId; // Set semester_id otomatis
+                        // Opsional: Set 'tingkat_kelas' otomatis jika perlu
+                        // $data['tingkat_kelas'] = $this->getOwnerRecord()->kelas_saat_ini ?? null;
+                        return $data;
+                    })
+                    ->form([ // Form HANYA untuk Create Action
+                        Forms\Components\Select::make('surah_id')
+                            ->relationship('surah', 'nama') // Pastikan relasi 'surah' ada di model HafalanSiswa
+                            ->searchable()
+                            ->preload()
+                            ->required()
+                            ->label('Pilih Surah'),
+                        Forms\Components\TextInput::make('nilai')
+                            ->numeric()
+                            ->default(0) // Nilai default saat buat baru
+                            ->label('Nilai Awal'),
+                        Forms\Components\TextInput::make('tingkat_kelas')
+                            ->required()
+                            ->maxLength(10),
+                        Forms\Components\Select::make('status_hafalan')
+                            ->options([
+                                'Belum' => 'Belum',
+                                'Proses' => 'Proses',
+                                'Selesai' => 'Selesai',
+                            ])
+                            ->default('Belum') // Status default saat buat baru
+                            ->required()
+                            ->label('Status Awal'),
+                        // TIDAK ADA input semester_id di sini
+                        // Tambahkan input tingkat_kelas di sini jika perlu diisi manual saat create
+                    ]),
+
             ])
             ->actions([
-                Action::make('Tambah Riwayat')
-                    ->icon('heroicon-o-plus-circle')
-                    ->form([
-                        DatePicker::make('tanggal')
-                            ->label('Tanggal Setoran')
-                            ->default(now())
-                            ->required(),
-                        Textarea::make('catatan')
-                            ->label('Catatan Guru'),
-                        // Assuming nilai is numeric 0-100 or similar
-                        TextInput::make('nilai_baru')
-                            ->label('Nilai')
-                            ->numeric()
-                            ->minValue(0)
-                            ->maxValue(100), // Adjust max value as needed
-                        Select::make('status_hafalan_baru')
-                            ->label('Status Hafalan')
-                            ->options([
-                                'belum_hafal' => 'Belum Hafal',
-                                'sedang_hafal' => 'Sedang Hafal',
-                                'selesai' => 'Selesai',
-                            ])
-                            ->required(),
-                    ])
-                    ->action(function (HafalanSiswa $record, array $data) {
-                        // Create RiwayatHafalan
-                        $record->riwayatHafalans()->create([
-                            'tanggal' => $data['tanggal'],
-                            'catatan' => $data['catatan'],
-                            'nilai' => $data['nilai_baru'],
-                            'status_hafalan' => $data['status_hafalan_baru'],
-                            // user_id might be needed if you track who input the record
-                            // 'user_id' => auth()->id(),
-                        ]);
-                        // The RiwayatHafalanObserver should handle updating
-                        // HafalanSiswa's 'nilai' and 'status_hafalan' fields.
-                    })
-                    ->modalHeading('Tambah Riwayat Hafalan'),
-
-                Action::make('Lihat Riwayat')
-                    ->icon('heroicon-o-eye')
-                    ->modalContent(
-                        fn(HafalanSiswa $record) =>
-                        View::make('filament.riwayat-hafalan-modal', [
-                            'riwayats' => $record->riwayatHafalans()->orderBy('tanggal', 'desc')->get()
-                        ])
-                    ) // <- This parenthesis closes modalContent
-                    // ->infolist([ ... ]) // Alternative using Infolist
-                    ->modalHeading(fn(HafalanSiswa $record): string => 'Riwayat Hafalan Surah: ' . $record->surah->nama)
-                    ->modalSubmitAction(false) // No submit button needed
-                    ->modalCancelActionLabel('Tutup'),
-
-
                 // Edit might be limited if updates happen via Riwayat
-                Tables\Actions\EditAction::make()->hidden(), // Example: Hide edit action
+                Tables\Actions\EditAction::make()->form([ // Form HANYA untuk Edit Action
+                    // TIDAK BOLEH ADA input semester_id
+                    // TIDAK BOLEH ADA input surah_id (atau buat disabled jika perlu)
+                    // Forms\Components\Select::make('surah_id')->disabled()->relationship('surah', 'nama')->label('Surah (Tidak dapat diubah)'),
+                    Forms\Components\TextInput::make('nilai')
+                        ->numeric()
+                        ->required()
+                        ->label('Nilai'),
+                    Forms\Components\Select::make('status_hafalan')
+                        ->options([
+                            'Belum' => 'Belum',
+                            'Proses' => 'Proses',
+                            'Selesai' => 'Selesai',
+                        ])
+                        ->required()
+                        ->label('Status Hafalan'),
+                    // Tambahkan input tingkat_kelas di sini jika boleh diedit
+                ]), // Example: Hide edit action
                 Tables\Actions\DeleteAction::make(), // To delete the target surah
             ])
             ->bulkActions([
