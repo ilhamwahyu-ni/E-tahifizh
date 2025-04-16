@@ -55,12 +55,7 @@ class HafalanSiswasRelationManager extends RelationManager
                     ->label('Surah Target')
                     ->searchable()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('semester.nama')
-                    ->label('Semester')
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('semester.tahunAjaran.nama')
-                    ->label('Tahun Ajaran')
-                    ->sortable(),
+
                 Tables\Columns\TextColumn::make('tingkat_kelas') // Kolom ini opsional, tampilkan jika relevan
                     ->label('Kelas Saat Target Dibuat')
                     ->searchable()
@@ -78,6 +73,12 @@ class HafalanSiswasRelationManager extends RelationManager
                         default => null, // Use null for no color
                     })
                     ->placeholder('-'),
+                Tables\Columns\TextColumn::make('semester.nama')
+                    ->label('Semester')
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('semester.tahunAjaran.nama')
+                    ->label('Tahun Ajaran')
+                    ->sortable(),
                 // --- Kolom Timestamp (Opsional) ---
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
@@ -99,8 +100,9 @@ class HafalanSiswasRelationManager extends RelationManager
                 // Filter lain bisa ditambahkan di sini jika perlu
             ])
             ->headerActions([
-                Tables\Actions\CreateAction::make()
+                Tables\Actions\CreateAction::make()->createAnother(false)
                     ->label('Tambah Hafalan') // Ubah label jika perlu
+                    ->modalHeading('') 
                     ->mutateFormDataUsing(function (array $data): array {
                         // Logika mencari dan menetapkan semester aktif
                         $activeSemesterId = Semester::where('is_active', true)->value('id');

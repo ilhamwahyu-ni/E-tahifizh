@@ -10,26 +10,36 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Models\Semester; // Import Semester model
+use App\Models\RekapSemesterSiswa; // Import RekapSemesterSiswa model
 
 class RekapSemesterSiswasRelationManager extends RelationManager
 {
-    protected static string $relationship = 'rekapSemesterSiswas'; // Assuming this is the relationship name
+    protected static string $relationship = 'rekapSemesterSiswas'; // Sesuaikan dengan nama relasi
+    protected static ?string $recordTitleAttribute = 'semester.nama'; // Tampilkan nama semester sebagai judul
 
+    //make button create & anather action to false
+
+
+    protected static ?string $title = 'Catatan Globa siswa'; // Judul untuk tampilan ini
     public function form(Form $form): Form
     {
         return $form
             ->schema([
+                // Pilih Semester (Hanya saat Create, Disabled saat Edit)
+                Forms\Components\Select::make('semester_id')
+                    ->label('Semester')
+                    ->options(Semester::with('tahunAjaran')->where('is_active', true)->get()->mapWithKeys(fn($semester) => [
+                        $semester->id => "{$semester->nama} - {$semester->tahunAjaran->nama}"
+                    ])->all()), // Ambil hanya semester yang aktif sebagai opsi
+
+
+                // Catatan Global
                 Forms\Components\Textarea::make('catatan_global')
                     ->label('Catatan Global Semester')
-                    ->rows(3) // Adjust rows as needed
-                    ->maxLength(65535), // Max length for TEXTAREA
-                // semester_id and siswa_id are handled by the relation manager
-                // If you need to select a semester when creating:
-                // Forms\Components\Select::make('semester_id')
-                //     ->relationship('semester', 'nama') // Adjust display attribute if needed
-                //     ->required()
-                //     ->searchable()
-                //     ->preload(),
+                    ->required()
+                    ->rows(5) // Atur tinggi area teks
+                    ->columnSpanFull(), // Ambil lebar penuh
+
             ]);
     }
 
@@ -37,24 +47,56 @@ class RekapSemesterSiswasRelationManager extends RelationManager
     {
         return $table
             // Use semester name or a combination for the title
-            ->recordTitle(fn ($record) => 'Rekap Semester: ' . $record->semester?->nama ?? $record->semester_id)
+            ->recordTitle(fn($record) => 'Rekap Semester: ' . $record->semester?->nama ?? $record->semester_id)
             ->columns([
+                Tables\Columns\TextColumn::make('catatan_global')
+                    ->label('Catatan Global')
+                    ->limit(50) // Limit display length in table
+                    ->tooltip(fn($record) => $record->catatan_global) // Show full text on hover
+                    ->wrap(), // Allow text wrapping
+                Tables\Columns\TextColumn::make('semester.tahunAjaran.nama')
+                    ->label('Tahun Ajaran')
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('semester.nama') // Assumes 'semester' relationship exists and 'nama' attribute on Semester model
                     ->label('Semester')
                     ->sortable()
                     ->searchable(),
-                Tables\Columns\TextColumn::make('catatan_global')
-                    ->label('Catatan Global')
-                    ->limit(50) // Limit display length in table
-                    ->tooltip(fn ($record) => $record->catatan_global) // Show full text on hover
-                    ->wrap(), // Allow text wrapping
+
             ])
             ->filters([
                 // Add filters if needed
             ])
             ->headerActions([
                 // Only allow creating if semesters are not automatically generated elsewhere
-                // Tables\Actions\CreateAction::make(),
+                Tables\Actions\CreateAction::make()->label('Tambah Catatan')
+                    ->modalHeading('') // Ubah label jika perlu
+                    ->mutateFormDataUsing(function (array $data): array {
+                        // Logika mencari dan menetapkan semester aktif
+                        $activeSemesterId = Semester::where('is_active', true)->value('id');
+                        if (!$activeSemesterId) {
+                            // Kirim notifikasi error jika tidak ada semester aktif
+                            \Filament\Notifications\Notification::make()
+                                ->title('Gagal Menambahkan Data')
+                                ->body('Tidak ada semester aktif yang ditemukan. Silakan aktifkan semester terlebih dahulu.')
+                                ->danger()
+                                ->send();
+                            // Batalkan proses create dengan pesan yang lebih jelas
+                            throw \Illuminate\Validation\ValidationException::withMessages([
+                                'semester_id' => 'Tidak ada semester aktif yang ditemukan. Silakan aktifkan semester terlebih dahulu.',
+                            ]);
+                        }
+                        $data['semester_id'] = $activeSemesterId; // Set semester_id otomatis
+                        // Opsional: Set 'tingkat_kelas' otomatis jika perlu
+                        // $data['tingkat_kelas'] = $this->getOwnerRecord()->kelas_saat_ini ?? null;
+                        return $data;
+                    })->createAnother(false)->form([ // Form HANYA untuk Create Action
+
+                            Forms\Components\Textarea::make('catatan_global')
+                                ->label('Catatan Global Semester')
+                                ->required()
+                                ->rows(5) // Atur tinggi area teks
+                                ->columnSpanFull(), // Ambil lebar penuh
+                        ]),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
@@ -68,14 +110,5 @@ class RekapSemesterSiswasRelationManager extends RelationManager
             ]);
     }
 
-     // Optional: Modify query if needed, e.g., order by semester start date
-     public function getEloquentQuery(): Builder
-     {
-         return parent::getEloquentQuery()->orderBy(
-             Semester::select('tanggal_mulai') // Assuming Semester model has 'tanggal_mulai'
-                 ->whereColumn('id', 'rekap_semester_siswas.semester_id') // Correlated subquery
-                 ->latest() // Order by the subquery result
-         );
-         // Or if Semester relationship is eager loaded, you might sort differently
-     }
+
 }

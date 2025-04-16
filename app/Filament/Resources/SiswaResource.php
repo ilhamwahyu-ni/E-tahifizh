@@ -92,7 +92,7 @@ class SiswaResource extends Resource
     {
         return [
             HafalanSiswasRelationManager::class,
-            // RekapSemesterSiswasRelationManager::class,
+            RekapSemesterSiswasRelationManager::class,
         ];
     }
 
