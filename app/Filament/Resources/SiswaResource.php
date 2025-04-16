@@ -25,18 +25,18 @@ class SiswaResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('nama')
-                    ->required()
-                    ->maxLength(100),
                 Forms\Components\TextInput::make('nis')
                     ->required()
                     ->maxLength(20),
+                Forms\Components\TextInput::make('nama')
+                    ->required()
+                    ->maxLength(100),
                 Forms\Components\Select::make('rombel_id')
                     ->relationship('rombel', 'id')
                     ->required(),
                 Forms\Components\Select::make('sekolah_id')
                     ->relationship('sekolah', 'id')
-                    ->required(),
+                    ->required()->hidden(),
                 Forms\Components\TextInput::make('jenis_kelamin')
                     ->required(),
                 Forms\Components\TextInput::make('status')
@@ -48,30 +48,20 @@ class SiswaResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('nama')
-                    ->searchable(),
                 Tables\Columns\TextColumn::make('nis')
                     ->searchable(),
+                Tables\Columns\TextColumn::make('nama')
+                    ->searchable(),
+                //make count hafalan
+                Tables\Columns\TextColumn::make('hafalan_siswas_count') // Ensure lowercase and snake_case
+                    ->counts('hafalanSiswas') // Ensure the relationship name matches the model
+                    ->label('Hafalan Count'),
                 Tables\Columns\TextColumn::make('rombel.id')
                     ->numeric()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('sekolah.id')
-                    ->numeric()
-                    ->sortable(),
+
                 Tables\Columns\TextColumn::make('jenis_kelamin'),
-                Tables\Columns\TextColumn::make('status'),
-                Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('updated_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('deleted_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+
             ])
             ->filters([
                 //
