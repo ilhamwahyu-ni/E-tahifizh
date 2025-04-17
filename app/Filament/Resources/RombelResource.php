@@ -71,13 +71,9 @@ class RombelResource extends Resource
                 Tables\Actions\Action::make('pdf')
                     ->label('PDF')
                     ->color('success')
-                    ->action(function (Rombel $record) {
-                        $pdf = Pdf::loadView('pdf', ['record' => $record]);
-                        return response()->streamDownload(
-                            fn() => print ($pdf->output()),
-                            $record->nama_rombongan . '.pdf'
-                        );
-                    }),
+
+                    ->url(fn(Rombel $record) => route('pdf', $record))
+                    ->openUrlInNewTab(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

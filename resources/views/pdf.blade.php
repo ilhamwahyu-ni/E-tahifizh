@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>Rombel Data</title>
+    <title>Rombel {{ $record->nama_rombongan ?? '-' }}</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -37,17 +37,17 @@
 
     <div class="data-row">
         <span class="label">Sekolah:</span>
-        <span>{{ $record->sekolah->nama }}</span>
+        <span>{{ $record->sekolah?->nama ?? '-' }}</span>
     </div>
 
     <div class="data-row">
         <span class="label">Tahun Ajaran:</span>
-        <span>{{ $record->tahunAjaran->nama }}</span>
+        <span>{{ $record->tahunAjaran?->nama ?? '-' }}</span>
     </div>
 
     <div class="data-row">
         <span class="label">Kelas:</span>
-        <span>{{ $record->tmKelas->level }}</span>
+        <span>{{ $record->tmKelas?->level ?? '-' }}</span>
     </div>
 
     <div class="data-row">

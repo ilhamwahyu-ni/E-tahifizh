@@ -37,6 +37,7 @@ class SiswaRelationManager extends RelationManager
     public function table(Table $table): Table
     {
         return $table
+            ->paginated(false)
             ->recordTitleAttribute('nis')
             ->columns([
                 //add number count from number one
@@ -68,11 +69,12 @@ class SiswaRelationManager extends RelationManager
                 // Ini berguna jika halaman View SiswaResource Anda juga menampilkan Relation Manager
                 Tables\Actions\Action::make('kelola_siswa')
                     ->label('Kelola Tahfizh')
-                    ->icon('heroicon-m-user-circle') // Ganti ikon jika perlu
+                    ->icon('heroicon-m-book-open') // Ganti ikon jika perlu
                     ->url(fn(Siswa $record): string => SiswaResource::getUrl('edit', ['record' => $record])), // Arahkan ke halaman view
 
                 // Tetap ada tombol untuk mengeluarkan siswa dari rombel
-            ])->defaultPaginationPageOption(32)
+            ])
+
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),

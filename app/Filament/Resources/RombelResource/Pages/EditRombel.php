@@ -13,6 +13,10 @@ class EditRombel extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
+
+            Actions\Action::make('downloadRapor')
+                ->label('Download Rapor Kelas')
+
         ];
     }
 
