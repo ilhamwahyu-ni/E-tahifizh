@@ -8,6 +8,9 @@ use App\Models\Rombel;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Filament\Resources\Resource;
+use Illuminate\Database\Eloquent\Model; // Add this import
+use Illuminate\Support\Facades\Blade; // Add this import
+use Barryvdh\DomPDF\Facade\Pdf; // Add this import
 use Illuminate\Database\Eloquent\Builder;
 use App\Filament\Resources\RombelResource\Pages;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -65,7 +68,16 @@ class RombelResource extends Resource
             ->actions([
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
-
+                Tables\Actions\Action::make('pdf')
+                    ->label('PDF')
+                    ->color('success')
+                    ->action(function (Rombel $record) {
+                        $pdf = Pdf::loadView('pdf', ['record' => $record]);
+                        return response()->streamDownload(
+                            fn() => print ($pdf->output()),
+                            $record->nama_rombongan . '.pdf'
+                        );
+                    }),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
