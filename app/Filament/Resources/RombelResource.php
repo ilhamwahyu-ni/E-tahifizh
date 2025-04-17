@@ -71,7 +71,7 @@ class RombelResource extends Resource
                 Tables\Actions\Action::make('pdf')
                     ->label('PDF')
                     ->color('success')
-
+                    ->icon('heroicon-o-printer')
                     ->url(fn(Rombel $record) => route('pdf', $record))
                     ->openUrlInNewTab(),
             ])
