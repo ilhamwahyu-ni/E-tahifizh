@@ -48,4 +48,15 @@ class Semester extends Model
     {
         return $this->belongsTo(TahunAjaran::class, 'tahun_ajaran_id');
     }
+
+    protected function namaTipe(): Attribute
+    {
+        return Attribute::make(
+            get: fn($value, $attributes) => match ($attributes['type'] ?? null) {
+                1 => 'Ganjil',
+                2 => 'Genap',
+                default => 'Tidak Diketahui',
+            },
+        );
+    }
 }

@@ -4,7 +4,7 @@ namespace Database\Factories;
 
 use App\Models\Siswa;
 use App\Models\Surah;
-
+use App\Models\TmKelas;
 use App\Models\Semester;
 use Illuminate\Support\Str;
 use App\Models\HafalanSiswa;
@@ -28,9 +28,9 @@ class HafalanSiswaFactory extends Factory
             'siswa_id' => Siswa::factory(),
             'surah_id' => Surah::factory(),
             'semester_id' => Semester::factory(),
-            'tingkat_kelas' => fake()->regexify('[A-Za-z0-9]{10}'),
-            'nilai' => fake()->regexify('[A-Za-z0-9]{10}'),
-            'status_hafalan' => fake()->randomElement(["belum","proses","selesai"]),
+            'tingkat_kelas' => TmKelas::factory()->create()->level,
+            'nilai' => fake()->numberBetween(80, 100),
+            'status_hafalan' => fake()->randomElement(["belum", "proses", "selesai"]),
         ];
     }
 }
