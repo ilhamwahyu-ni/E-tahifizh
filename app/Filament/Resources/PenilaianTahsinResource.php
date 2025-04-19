@@ -23,11 +23,11 @@ class PenilaianTahsinResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\Select::make('siswa_id')
-                    ->relationship('siswa', 'id')
+                Forms\Components\Select::make('siswa')
+                    ->relationship('siswa', 'nama')
                     ->required(),
                 Forms\Components\Select::make('materi_tahsin_id')
-                    ->relationship('materiTahsin', 'id')
+                    ->relationship('materiTahsin', 'topik_materi')
                     ->required(),
                 Forms\Components\Select::make('semester_id')
                     ->relationship('semester', 'id')
@@ -46,10 +46,10 @@ class PenilaianTahsinResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('siswa.id')
+                Tables\Columns\TextColumn::make('siswa.nama')
                     ->numeric()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('materiTahsin.id')
+                Tables\Columns\TextColumn::make('materiTahsin.topik_materi')
                     ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('semester.id')
@@ -78,7 +78,7 @@ class PenilaianTahsinResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
-   Tables\Actions\DeleteAction::make(),
+                Tables\Actions\DeleteAction::make(),
 
             ])
             ->bulkActions([
