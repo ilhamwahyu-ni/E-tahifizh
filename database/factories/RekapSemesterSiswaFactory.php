@@ -25,8 +25,8 @@ class RekapSemesterSiswaFactory extends Factory
     {
         return [
             'siswa_id' => Siswa::factory(),
-            'semester_id' => Semester::factory(),
-            'catatan_global' => fake()->text(),
+            'catatan_global_hafalan' => $this->faker->paragraph(1), // Contoh catatan dummy hafalan
+            'catatan_global_tahsin' => $this->faker->paragraph(1), // Contoh catatan dummy tahsin
         ];
     }
 }

@@ -19,7 +19,8 @@ class RekapSemesterSiswa extends Model
     protected $fillable = [
         'siswa_id',
         'semester_id',
-        'catatan_global',
+        'catatan_global_hafalan',
+        'catatan_global_tahsin'
     ];
 
     /**
